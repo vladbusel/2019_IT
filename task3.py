@@ -9,15 +9,16 @@ def get_indices(N, n_batches, split_ratio):
         N (int): total counts
         n_batches (int): number of splits
         split_ratio (float): split ratio, defines position of j in [i, j, k].
-
+        split_ratio = (j-i)/(k-j)
     Returns:
         generator for batch indices [i, j, k]
     """
-    inds = np.array([0, 0, 0])
+    a = (N-1)/(n_batches+1/split_ratio)
+    step = np.array([a for i in range(3)])
+    inds = np.array([0, a/split_ratio, a*(1+1/split_ratio)])
     for i in range(n_batches):
-        # todo: move forward batch
-        # calculate new indices
-        yield inds
+        yield (inds+0.5)//1
+        inds = inds + step
 
 def main():
     for inds in get_indices(100, 5, 0.25):
